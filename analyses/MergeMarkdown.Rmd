@@ -1,0 +1,114 @@
+---
+title: "Graphing Markdwon"
+output: html_document
+date: "2023-10-18"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+
+`
+
+
+
+```{r}
+ggplot(
+  data = TotalIS_RSC_P1_cond,
+  mapping = aes(x = Date, y = Specific_Conductance)
+) +
+  geom_point()+
+  geom_smooth(method = "lm", fullrange = T) +
+  labs(
+    title = "RSC P1 Conductivity ",
+    x = "Date", y = "Specific Conductivity (μS/cm)",
+) 
+   
+```
+
+
+```{r}
+
+library(ggplot2)
+ggplot(
+  data = TotalIS_RSC_P1_cond, aes(x = Date, y = Specific_Conductance)
+) +
+  geom_line(data =TotalIS_RSC_P1_cond, aes(x = Date, y = Specific_Conductance)  )+
+  geom_point(data =TotalIS_RSC_P1_cond, aes(x = Date, y = Specific_Conductance) )+ 
+labs(
+    title = "RSC P1 Conductivity ",
+    x = "Date", y = "Specific Conductivity (μS/cm)",
+) 
+   
+```
+
+```{r}
+library(ggplot2)
+library(lubridate)
+#RSC <- data(list=TotalIS_RSC_P1_cond$Date)
+TotalIS_RSC_P1_cond$Date = as.Date(TotalIS_RSC_P1_cond$Date,"%m/%d/%Y")
+#Newdate <- mdy('RSC$Date')
+
+Newdate <- parse_date_time(as.numeric(TotalIS_RSC_P1_cond$Date, "Ymd HMS"))
+
+plot.RSCP1 <- ggplot(
+  data = TotalIS_RSC_P1_cond, aes(x = Date, y = Specific_Conductance, group=1)
+) +
+  geom_line() +
+  geom_point()+ 
+labs(
+    title = "RSC P1 Conductivity ",
+    x = "Date", y = "Specific Conductivity (μS/cm)",)+
+    
+  scale_x_date(date_labels = "%B")+
+  theme(axis.text.x = element_text(angle=45, hjust = 1))
+    
+plot.RSCP1
+```
+
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(dplyr)
+library(ggplot2)
+data = (TotalIS_RSC_P1_cond)
+TotalIS_RSC_P1_cond$Date <- as.Date(TotalIS_RSC_P1_cond$Date)
+ Date <- parse_date_time(TotalIS_RSC_P1_cond$Date, "Ymd HMS")
+plot.RSCP1 <- ggplot(
+  data = TotalIS_RSC_P1_cond, aes(x = Newdate, y = Specific_Conductance, group=1)
+) +
+  geom_line() +
+  geom_point()+ 
+labs(
+    title = "RSC P1 Conductivity ",
+    x = "Date", y = "Specific Conductivity (μS/cm)",)+
+    
+  scale_x_date(date_labels = "%B")+
+  theme(axis.text.x = element_text(angle=45, hjust = 1))
+ plot.RSCP1
+
+```
+
