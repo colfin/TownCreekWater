@@ -45,5 +45,9 @@ docs/
 # translation temp files
 po/*~
 
-# RStudio Connect folder
+#RStudio Connect folder
 rsconnect/
+
+# OS generated files
+.DS_Store
+.DS_Store?
