@@ -6,6 +6,7 @@ date: "2023-10-18"
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+rm(list = ls())
 ```
 
 ```{r read in data}
@@ -43,7 +44,7 @@ labs(
    
 ```
 
-```{r working date plot}
+```{r working date plot - Riffle 1 Conductivity}
 library(ggplot2)
 library(lubridate)
 #RSC <- data(list=TotalIS_RSC_P1_cond$Date)
@@ -67,6 +68,149 @@ labs(
   theme(axis.text.x = element_text(angle=45, hjust = 1))
     
 plot.RSCP1
+```
+
+
+```{r working date plot - Riffle 1 Water Level}
+library(ggplot2)
+library(lubridate)
+FinalRiffle1 <- read.csv("C:\\Users\\Teten\\Documents\\HOBOware\\Final_Total_Riffle1.csv")
+FinalRiffle1$Date2 = as.Date(FinalRiffle1$Date,"%m/%d/%Y")
+plot.R1WL <- ggplot(
+  data = FinalRiffle1, aes(x = Date2, y = Sensor_Depth, group=1)
+ ) +
+     geom_line() +
+     geom_point(size=.25)+ 
+     labs(
+         title = "Riffle 1 Water Level ",
+         x = "Date", y = "Sensor Depth (m)",)+
+     
+     scale_x_date(date_labels = "%F", date_breaks = "1 month")+
+     theme(axis.text.x = element_text(angle=45, hjust = 1))
+
+plot.R1WL
+```
+
+```{r working date plot - Riffle 3 Water Level}
+library(ggplot2)
+library(lubridate)
+FinalRiffle3 <- read.csv("C:\\Users\\Teten\\GitHub\\TownCreekWater\\data\\HoboData\\Totalriffle3.csv")
+FinalRiffle3$Date2 = as.Date(FinalRiffle3$Date,"%m/%d/%Y")
+plot.R3WL <- ggplot(
+  data = FinalRiffle3, aes(x = Date2, y = Sensor_Depth, group=1)
+ ) +
+     geom_line() +
+     geom_point(size=.25)+ 
+     labs(
+         title = "Riffle 3 Water Level ",
+         x = "Date", y = "Sensor Depth (m)",)+
+     
+     scale_x_date(date_labels = "%F", date_breaks = "1 month")+
+     theme(axis.text.x = element_text(angle=45, hjust = 1))
+
+plot.R3WL
+
+```
+
+```{r working date plot - Piezometer Shallow}
+library(ggplot2)
+library(lubridate)
+TotalPiezometerShallow <- read.csv("C:\\Users\\Teten\\GitHub\\TownCreekWater\\data\\HoboData\\TotalRSC_Piezometer_shallow.csv")
+TotalPiezometerShallow$Date2 = as.Date(TotalPiezometerShallow$Date,"%m/%d/%Y")
+plot.TPS <- ggplot(
+  data = TotalPiezometerShallow, aes(x = Date2, y = Sensor_Depth, group=1)
+ ) +
+     geom_line() +
+     geom_point(size=.25)+ 
+     labs(
+         title = "Piezometer Shallow Water Level ",
+         x = "Date", y = "Sensor Depth (m)",)+
+     
+     scale_x_date(date_labels = "%F", date_breaks = "1 month")+
+     theme(axis.text.x = element_text(angle=45, hjust = 1))
+
+plot.TPS
+```
+
+
+
+```{r working date plot - Piezometer Up Slope}
+library(ggplot2)
+library(lubridate)
+TotalPiezometerUpSlope <- read.csv("C:\\Users\\Teten\\GitHub\\TownCreekWater\\data\\HoboData\\piezometer_up_slope.csv")
+TotalPiezometerUpSlope$Date2 = as.Date(TotalPiezometerShallow$Date,"%m/%d/%Y")
+plot.TPUS <- ggplot(
+  data = TotalPiezometerUpSlope, aes(x = Date2, y = Sensor_Depth, group=1)
+ ) +
+     geom_line() +
+     geom_point(size=.25)+ 
+     labs(
+         title = "Piezometer Up Slope Water Level ",
+         x = "Date", y = "Sensor Depth (m)",)+
+     
+     scale_x_date(date_labels = "%F", date_breaks = "1 month")+
+     theme(axis.text.x = element_text(angle=45, hjust = 1))
+plot.TPUS
+
+```
+
+```{r - working date plot - Small RSC Down}
+library(ggplot2)
+library(lubridate)
+TotalSmallRSCDown <- read.csv("C:\\Users\\Teten\\GitHub\\TownCreekWater\\data\\HoboData\\Total_Small_RSC_Down.csv")
+TotalSmallRSCDown$Date2 = as.Date(TotalSmallRSCDown$Date,"%m/%d/%Y")
+plot.TSRSCD <- ggplot(
+  data = TotalSmallRSCDown, aes(x = Date2, y = Sensor_Depth, group=1)
+ ) +
+     geom_line() +
+     geom_point(size=.25)+ 
+     labs(
+         title = "RSC Small Down Water Level ",
+         x = "Date", y = "Sensor Depth (m)",)+
+     
+     scale_x_date(date_labels = "%F", date_breaks = "1 month")+
+     theme(axis.text.x = element_text(angle=45, hjust = 1))
+plot.TSRSCD
+
+```
+
+```{r working date plot - Piezometer Deep Water Level}
+library(ggplot2)
+library(lubridate)
+TotalPiezometerDeep <- read.csv("C:\\Users\\Teten\\GitHub\\TownCreekWater\\data\\HoboData\\Totalrsc_piezometer_deep.csv")
+TotalPiezometerDeep$Date2 = as.Date(TotalPiezometerDeep$Date,"%m/%d/%Y")
+plot.TPD <- ggplot(
+  data = TotalPiezometerDeep, aes(x = Date2, y = Sensor_Depth, group=1)
+ ) +
+     geom_line() +
+     geom_point(size=.25)+ 
+     labs(
+         title = "Piezometer Deep Water Level ",
+         x = "Date", y = "Sensor Depth (m)",)+
+     
+     scale_x_date(date_labels = "%F", date_breaks = "1 month")+
+     theme(axis.text.x = element_text(angle=45, hjust = 1))
+plot.TPD
+```
+
+
+```{r - working date plot - Small RSC Up}
+library(ggplot2)
+library(lubridate)
+TotalSmallRSCUp <- read.csv("C:\\Users\\Teten\\GitHub\\TownCreekWater\\data\\HoboData\\TotalTC_Small_RSC_Up.csv")
+TotalSmallRSCUp$Date2 <- as.Date(TotalSmallRSCUp$Date,"%m/%d/%Y")
+plot.TSRSCU <- ggplot(
+  data = TotalSmallRSCUp, aes(x = Date2, y = Sensor_Depth, group=1)
+ ) +
+     geom_line() +
+     geom_point(size=.25)+ 
+     labs(
+         title = "Small RSC Water Level ",
+         x = "Date", y = "Sensor Depth (m)",)+
+     
+     scale_x_date(date_labels = "%F", date_breaks = "1 month")+
+     theme(axis.text.x = element_text(angle=45, hjust = 1))
+plot.TSRSCU
 ```
 
 
