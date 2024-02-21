@@ -1,0 +1,51 @@
+---
+title: "Dissolved Oxygen Markdown"
+output: html_document
+date: "2024-02-14"
+---
+```{r}
+require("tidyverse")
+require("lubridate")
+require ("ggplot2")
+```
+
+```{r}
+Totalr1DO <- read.csv("C:\\Users\\Teten\\GitHub\\TownCreekWater\\data\\HoboData\\Totalr1DO.csv")
+
+Totalr1DO$Date2 <- as.Date(Totalr1DO$Date,"%m/%d/%Y")
+Totalr1DO$DO_concentration[Totalr1DO$DO_concentration<0] <- 0 
+
+plot.R1DO <- ggplot(
+  data = Totalr1DO, aes(x = Date2, y = DO_concentration, group=1)
+ ) +
+  geom_line(data = Totalr1DO[1:21698, ], aes(x = Date2, y=DO_concentration, group = 1 )) +
+  geom_line(data = Totalr1DO[21699:length(Totalr1DO$Date), ], aes(x = Date2, y=DO_concentration, group = 2)) +
+     geom_point(size=.25)+ 
+     labs(
+         title = "P1 Dissolved Oxygen ",
+         x = "", y = "Dissolved Oxygen (mg/L)")+
+     scale_x_date(date_labels = "%F", date_breaks = "1 month")+
+     theme(axis.text.x = element_text(angle=45, hjust = 1))
+
+plot.R1DO
+```
+```{r}
+TotalR3DO <- read.csv("C:\\Users\\Teten\\GitHub\\TownCreekWater\\data\\HoboData\\TotalRiffle3do.csv")
+
+TotalR3DO$Date2 <- as.Date(TotalR3DO$Date,"%m/%d/%Y")
+TotalR3DO$DO_concentration[TotalR3DO$DO_concentration<0] <- 0
+
+plot.R3DO <- ggplot(
+data = TotalR3DO, aes(x = Date2, y = DO_concentration, group=1)
+) +
+     geom_point(size=.25)+ 
+     labs(
+         title = "P3 Dissolved Oxygen ",
+         x = "", y = "Dissolved Oxygen (mg/L)",)+
+     
+     scale_x_date(date_labels = "%F", date_breaks = "1 month")+
+     theme(axis.text.x = element_text(angle=45, hjust = 1))
+
+plot.R3DO
+```
+

@@ -103,7 +103,7 @@ plot.R1WL
 
 ```{r working date plot - Riffle 3 Water Level}
 # Read in data:
-FinalRiffle3 <- read.csv("../data/HoboData/Totalriffle3.csv")
+FinalRiffle3 <- read.csv("C:\\Users\\Teten\\GitHub\\TownCreekWater\\data\\HoboData\\Totalriffle3.csv")
 
 # Format date:
 FinalRiffle3$Date2 = as.Date(FinalRiffle3$Date,"%m/%d/%Y")
@@ -155,7 +155,7 @@ plot.TPS
 TotalPiezometerUpSlope <- read.csv("C:\\Users\\Teten\\GitHub\\TownCreekWater\\data\\HoboData\\piezometer_up_slope.csv")
 
 # Format date:
-TotalPiezometerUpSlope$Date2 = as.Date(TotalPiezometerShallow$Date,"%m/%d/%Y")
+TotalPiezometerUpSlope$Date2 = as.Date(TotalPiezometerUpSlope$Date,"%m/%d/%Y")
 
 # Plot
 plot.TPUS <- ggplot(
