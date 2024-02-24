@@ -40,12 +40,12 @@ NOX <- read.csv("../data/GrabSampleNutrients/NOX.csv")
 
 ```{r wrangle data}
 # Make up or down a factor:
-nitrate_LONG$Up_or_Down <- factor(nitrate_LONG$Up_or_Down, levels = c("Up", "Down"))
+#nitrate_LONG$Up_or_Down <- factor(nitrate_LONG$Up_or_Down, levels = c("Up", "Down"))
 
 # Shorten date:
 
 # Duplicate of nitrate_up_down for plotting:
-nitrate_up_down2 <- nitrate_up_down
+#nitrate_up_down2 <- nitrate_up_down
 ```
 
 ```{r wrangle WRC data}
@@ -189,7 +189,6 @@ NOX_Unknown_Downstream <- NOX_Unknown_dropNegs %>%
 
 
 plot.NOX <- ggplot() +
-                     #geom_line(aes(shape=Up_or_Down, color=Up_or_Down, fill = Up_or_Down), size = 5) +
   geom_line(data = NOX_Unknown_Upstream, aes(x=Date, y=Peak.Concentration, group=1), color = "#CC79A7", size = 1)+
   geom_point(data = NOX_Unknown_Upstream, aes(x=Date, y=Peak.Concentration, group=1), color = "#CC79A7", fill = "#CC79A7", size = 4, shape = 24)+
   geom_line(data = NOX_Unknown_Downstream, aes(x=Date, y=Peak.Concentration, group=2), color = "#0072B2", size = 1)+
@@ -218,11 +217,38 @@ plot.NOX
 ```
 
 ```{r Mock plot to get legend}
+# This is actually a better way to make the plot anyway (but Y-axis label here is wrong)
 
+plot.Mock <- ggplot(data = NH3_PO4_Unknown_dropNegs, aes(x = Date, y = Peak.Concentration, shape=Site, color=Site, fill = Site)) +
+  geom_line(size = 1) +
+  geom_point(size = 4)+
+  scale_color_manual(values=c("#CC79A7","#0072B2"), labels = c("Upstream", "Downstream"), name="Sample Location") +
+  scale_shape_manual(values = c(24, 25), labels = c("Upstream", "Downstream"), name = "Sample Location")+
+  scale_fill_manual(values = c("#CC79A7","#0072B2"), labels = c("Upstream", "Downstream"), name="Sample Location")+
+  theme_bw() +
+  #Remove plot grid lines
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
+  #Set axis title and text properties, tick marks, and labels
+  theme(text=element_text(size=20),axis.title=element_text(size=20,face="bold"),
+          axis.text=element_text(size=20),  
+          axis.title.y=element_text(margin=margin(r=10)),
+          axis.title.x = element_text(margin = margin(r=10)),
+          panel.border = element_rect(colour = "black",linewidth=1),strip.text = element_text(size = 20), legend.position="bottom", legend.title = element_text(size=20), legend.text=element_text(size=20)) + 
+          theme(axis.ticks.length=unit(0.3,"cm")) + 
+          labs(x = "", y = expression(paste("NO"[x],""^{"-"}," mg/l")), title="") +
+  theme(rect=element_rect(fill="transparent"))+
+  theme(plot.background = element_rect(color=NA), axis.text.x = element_text(angle=45, hjust = 1))
+  
+ 
+plot.Mock
 ```
 
 ```{r Extract mock plot legend}
+leg_bottom <- get_legend(plot.Mock, position = "bottom") #Extract legend as a legend Grob
+legend_plot_bottom <- as_ggplot(leg_bottom) #Asign the grob as a ggplot
+legend_plot_bottom #View the plot
 
+#ggsave("../figures/Legend_bottom.png", plot=legend_plot_bottom, device="png", path=NULL, scale=1, dpi=300, height = 3, width = 12, limitsize=T, bg="white")
 ```
 
 
@@ -232,7 +258,7 @@ two_panel_NH3_NOX <- ggarrange(plot.NH3, plot.NOX, ncol = 1, nrow = 2, labels = 
 
 two_panel_NH3_NOX
 
-#ggsave("../figures/SedimentN_4Panel.png", plot=plot.NH4_and_NOX_DM, device="png", path=NULL, scale=1, width=12, height=10, dpi=600, limitsize=TRUE, bg="white")
+#ggsave("../figures/NH3_NOX.png", plot=two_panel_NH3_NOX, device="png", path=NULL, scale=1, width=12, height=10, dpi=600, limitsize=TRUE, bg="white")
 ```
 
 
