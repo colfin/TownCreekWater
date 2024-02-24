@@ -1,0 +1,54 @@
+---
+title: "pH"
+output: html_document
+date: "2024-02-08"
+---
+```{r - R packages }
+require("tidyverse")
+require("lubridate")
+require ("ggplot2")
+```
+
+```{r - ph R1}
+TotalR1PH <- read.csv("C:\\Users\\Teten\\GitHub\\TownCreekWater\\data\\HoboData\\Total Town creek r1 ph.csv")
+
+TotalR1PH$Date2 <- as.Date(TotalR1PH$Date,"%m/%d/%Y")
+
+
+plot.R1PH <- ggplot(
+  #data = TotalR1PH, aes(x = Date2, y = pH, group=1 )
+) +
+  geom_line(data = TotalR1PH[1:28331, ], aes(x = Date2, y=pH, group = 1 )) +
+  geom_line(data = TotalR1PH[28332:length(TotalR1PH$Date), ], aes(x = Date2, y=pH, group = 2 )) +
+
+  geom_point(size=.25)+ 
+  labs(
+    title = "R1 pH" ,
+    x = "", y = "pH" , )+
+    
+   scale_x_date(date_labels = "%F", date_breaks = "1 month")+
+     theme(axis.text.x = element_text(angle=45, hjust = 1))
+     
+plot.R1PH
+```
+```{r}
+
+TotalR3PH <- read.csv("C:\\Users\\Teten\\GitHub\\TownCreekWater\\data\\HoboData\\Total Town Creek r3 ph (2).csv")
+
+TotalR3PH$Date2 <- as.Date(TotalR3PH$Date, "%m/%d/%Y")
+
+
+plot.R3PH <- ggplot(
+  data = TotalR3PH, aes(x = Date2, y = pH, group=1)
+) +
+  geom_line() +
+  geom_point(size=.25)+ 
+  labs(
+    title = "R3 pH" ,
+    x = "", y = "pH" , )+
+    
+   scale_x_date(date_labels = "%F", date_breaks = "1 month")+
+     theme(axis.text.x = element_text(angle=45, hjust = 1))
+plot.R3PH
+```
+

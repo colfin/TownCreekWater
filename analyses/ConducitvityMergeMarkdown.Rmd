@@ -8,9 +8,13 @@ date: "2024-01-24"
 library(tidyverse)
 library(lubridate)
 
+#Read in csv file 
 TotalDryRSCCond <- read.csv("C:\\Users\\Teten\\GitHub\\TownCreekWater\\data\\HoboData\\TotalDry_RSC_down_condo.csv")
 
+#Date manipulation 
 TotalDryRSCCond$Date2 = as.Date(TotalDryRSCCond$Date,"%m/%d/%Y" )
+
+#Plot
 plot.TDRSCC <- ggplot(
   data = TotalDryRSCCond, aes(x = Date2, y = Specific_Conductance, group=1)
  ) +
@@ -21,20 +25,20 @@ plot.TDRSCC <- ggplot(
          x = "Date", y = "Specific Conducitivity (μS/cm)",)+
      
      scale_x_date(date_labels = "%F", date_breaks = "1 month")+
-     theme(axis.text.x = element_text(angle=45, hjust = 1))
+     theme(axis.text.x = element_text(angle=45, hjust = 1)) + 
+  scale_y_continuous(0,20)
 plot.TDRSCC
 ggsave(file = "DryRSCCondcuctivity.png",
 width = 8,
 height = 5.5, 
-dpi = 300
-+ )
+dpi = 300)
 ```
 
 
 ```{r - TotalIS_RSC_P1_Cond}
 library(tidyverse)
 library(lubridate)
-
+#Read in csv file 
 TotalISRSCP1Cond <- read.csv("C:\\Users\\Teten\\GitHub\\TownCreekWater\\data\\HoboData\\TotalIS_RSC_P1_cond.csv")
 
 TotalISRSCP1Cond$Date2 = as.Date(TotalISRSCP1Cond$Date,"%m/%d/%Y" )
@@ -63,26 +67,27 @@ dpi = 300
 library(tidyverse)
 library(lubridate)
 
+#Read in csv file 
 TotalRSCPiezometerDeep <- read.csv("C:\\Users\\Teten\\GitHub\\TownCreekWater\\data\\HoboData\\TotalRSC_Piezometer_deep_cond.csv")
 
 TotalRSCPiezometerDeep$Date2 = as.Date(TotalRSCPiezometerDeep$Date,"%m/%d/%Y" )
+
 plot.TRSCPD<- ggplot(
-  data = TotalRSCPiezometerDeep, aes(x = Date2, y = Specific_Conductance, group=1)
+  data = TotalRSCPiezometerDeep
  ) +
-     geom_line() +
-     geom_point(size=.25)+ 
+#geom_line(data = TotalRSCPiezometerDeep[1:18544, ], aes(x = Date2, y=Specific_Conductance, group = 1 )) +
+#geom_line(data = TotalRSCPiezometerDeep[28233:length(TotalR1PH$Date), ], aes(x = Date2, y=Specific_Conductance, group = 2))+ 
+geom_point(data = TotalRSCPiezometerDeep, aes(x = Date2, y=Specific_Conductance),size=.25)+ 
      labs(
          title = "RSC Piezometer Deep Conducitivity Levels",
-         x = "Date", y = "Specific Conducitivity (μS/cm)",)+
-     
+         x = "Date", y = "Specific Conducitivity (μS/cm)")+
      scale_x_date(date_labels = "%F", date_breaks = "1 month")+
      theme(axis.text.x = element_text(angle=45, hjust = 1))
 plot.TRSCPD
 ggsave(file = "RSCPDConductivity.png",
 width = 8,
 height = 5.5, 
-dpi = 300
-)
+dpi = 300)
 ```
 
 ```{r - Total IS RSC Upstream Conducitivty}
@@ -90,13 +95,14 @@ dpi = 300
 library(tidyverse)
 library(lubridate)
 
+#Read in csv file 
 TotalISRSCUpCond <- read.csv("C:\\Users\\Teten\\GitHub\\TownCreekWater\\data\\HoboData\\IS_RSC_Upstream_cond.csv")
 
 TotalISRSCUpCond$Date2 = as.Date(TotalISRSCUpCond$Date,"%m/%d/%Y" )
 plot.ISRSCUP<- ggplot(
   data = TotalISRSCUpCond, aes(x = Date2, y = Specific_Conductance, group=1)
  ) +
-     geom_line() +
+     #geom_line() +
      geom_point(size=.25)+ 
      labs(
          title = "In Stream RSC Upstream Conducitivity Levels",

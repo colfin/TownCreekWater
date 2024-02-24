@@ -1,0 +1,71 @@
+---
+title: "Grafana Data"
+output: html_document
+date: "2024-02-22"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r-required packaging}
+#load in necessary packages 
+require(tidyverse)
+require(ggplot2)
+require(lubridate)
+```
+
+```{r}
+require(tidyverse)
+require(ggplot2)
+require(lubridate)
+```
+
+
+```{r - Node 12 TC Upstream}
+# read in csv file 
+N12TCUP <- read.csv("C:\\Users\\Teten\\Downloads\\Peralta Lab Data\\Grafana\\Node 12 -TC Upstream _07-23 to 01-24.csv")
+
+# Date manipulation - to month and day 
+N12TCUP$Time2 <- as.Date(N12TCUP$Time,"%m/%d/%Y")
+
+
+# No Negative water level values so no furthermanipulation is required 
+
+#plot
+plot.N12TCUP <- ggplot (data = N12TCUP, aes(x = Time2, y = Water_level) 
+  )+
+  geom_point()+
+  geom_line()+
+  labs( 
+    title = "Node 12 TC Upstream ",
+    x = "", y = "Water level (m)",
+    scale_x_date(date_labels = "%F", date_breaks = "1 month"))
+    theme(axis.text.x = element_text(angle=45, hjust = 1))
+plot.N12TCUP
+```
+
+```{r}
+# read in csv file 
+N10TCDown <- read.csv("C:\\Users\\Teten\\Downloads\\Peralta Lab Data\\Grafana\\Node 10 -TC Downstream _07-23 to 01-24.csv")
+
+# Date manipulation - to month and day 
+N10TCDown$Time2 <- as.Date(N10TCDown$Time,"%m/%d/%Y")
+
+
+#  Negative water level values so  further manipulation is required 
+N10TCDown$Water_level[N10TCDown$Water_level<0] <- 0
+
+#plot
+plot.N10TCDown <- ggplot (data = N10TCDown, aes(x = Time2, y = Water_level) 
+  )+
+  geom_point()+
+  geom_line()+
+  labs( 
+    title = "Node 10 TC Downstream ",
+    x = "", y = "Water level (m)",
+    scale_x_date(date_labels = "%F", date_breaks = "1 month"))
+    theme(axis.text.x = element_text(angle=45, hjust = 1))
+plot.N10TCDown
+```
+
