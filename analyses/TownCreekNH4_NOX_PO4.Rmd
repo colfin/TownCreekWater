@@ -85,63 +85,6 @@ NOX_Unknown_dropNegs <- NOX_Unknown %>%
 cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 ```
 
-```{r}
-plot.nitrate <- ggplot() +
-                     #geom_line(aes(shape=Up_or_Down, color=Up_or_Down, fill = Up_or_Down), size = 5) +
-  geom_line(data = nitrate_up_down, aes(x=Date, y=NO3.Up, group=1))+
-  geom_line(data = nitrate_up_down2, aes(x=Date, y=NO3.Down, group=2))+
-  #scale_color_manual(values=c("#D55E00","#CC79A7"), labels = c("Upstream", "Downstream"), name="Sample Location") +
- # scale_shape_manual(values = c(24, 25), labels = c("Upstream", "Downstream"), name = "Sample Location")+
-  #scale_fill_manual(values = c("#D55E00","#CC79A7"), labels = c("Upstream", "Downstream"), name="Sample Location")+
-  theme_bw() +
-  #Remove plot grid lines
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
-  #Set axis title and text properties, tick marks, and labels
-  theme(text=element_text(size=40),axis.title=element_text(size=40,face="bold"),
-          axis.text=element_text(size=40),  
-          axis.title.y=element_text(margin=margin(r=10)),
-          axis.title.x = element_text(margin = margin(r=10)),
-          panel.border = element_rect(colour = "black",linewidth=1),strip.text = element_text(size = 40), legend.position="none", legend.title = element_text(size=40), legend.text=element_text(size=40)) + 
-          theme(axis.ticks.length=unit(0.3,"cm")) + 
-          labs(x = "Date", y = expression(paste("NO"[3]," mg/l")), title="") +
-  theme(rect=element_rect(fill="transparent"))+
-  theme(plot.background = element_rect(color=NA))
-  
- 
-plot.nitrate
-
-#ggsave("../figures/denit_Summer_BigFont.png", plot=plot.denit_ACET_Summer_BigFont, device="png", path=NULL, scale=1, width=17, height=10, dpi=900, limitsize=TRUE, bg="white")
-```
-
-
-
-```{r plot nitrate data}
-plot.nitrate_2 <- ggplot(nitrate_LONG, aes(x=as.Date(Date), y=NO3, color=Up_or_Down)) +
-  geom_line(aes(x=Date, y=NO3, color=Up_or_Down, group=Up_or_Down))+
-  geom_point(aes(x=Date, y=NO3, color=Up_or_Down, shape=Up_or_Down, fill=Up_or_Down))+
-  scale_color_manual(values=c("#D55E00","#CC79A7"), labels = c("Upstream", "Downstream"), name="Sample Location") +
-  scale_shape_manual(values = c(24, 25), labels = c("Upstream", "Downstream"), name = "Sample Location")+
-  scale_fill_manual(values = c("#D55E00","#CC79A7"), labels = c("Upstream", "Downstream"), name="Sample Location")+
-  theme_bw() +
-  #Remove plot grid lines
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
-  #Set axis title and text properties, tick marks, and labels
-  theme(text=element_text(size=40),axis.title=element_text(size=40,face="bold"),
-          axis.text=element_text(size=40),  
-          axis.title.y=element_text(margin=margin(r=10)),
-          axis.title.x = element_text(margin = margin(r=10)),
-          panel.border = element_rect(colour = "black",linewidth=1),strip.text = element_text(size = 40), legend.position="right", legend.title = element_text(size=40), legend.text=element_text(size=40)) + 
-          theme(axis.ticks.length=unit(0.3,"cm")) + 
-          labs(x = "Date", y = expression(paste("NO"[3]," mg/l")), title="") +
-  theme(rect=element_rect(fill="transparent"))+
-  theme(plot.background = element_rect(color=NA))
-  
- 
-plot.nitrate_2
-
-#ggsave("../figures/denit_Summer_BigFont.png", plot=plot.denit_ACET_Summer_BigFont, device="png", path=NULL, scale=1, width=17, height=10, dpi=900, limitsize=TRUE, bg="white")
-```
-
 
 ```{r WRC NH3}
 NH3_PO4_Unknown_Upstream <- NH3_PO4_Unknown_dropNegs %>%
@@ -217,7 +160,10 @@ plot.NOX
 ```
 
 ```{r Mock plot to get legend}
-# This is actually a better way to make the plot anyway (but Y-axis label here is wrong)
+# This is actually a better way to make the plot anyway
+
+# Make $Date a Date object:
+NH3_PO4_Unknown_dropNegs$Date <- as.Date(NH3_PO4_Unknown_dropNegs$Date)
 
 plot.Mock <- ggplot(data = NH3_PO4_Unknown_dropNegs, aes(x = Date, y = Peak.Concentration, shape=Site, color=Site, fill = Site)) +
   geom_line(size = 1) +
@@ -235,9 +181,10 @@ plot.Mock <- ggplot(data = NH3_PO4_Unknown_dropNegs, aes(x = Date, y = Peak.Conc
           axis.title.x = element_text(margin = margin(r=10)),
           panel.border = element_rect(colour = "black",linewidth=1),strip.text = element_text(size = 20), legend.position="bottom", legend.title = element_text(size=20), legend.text=element_text(size=20)) + 
           theme(axis.ticks.length=unit(0.3,"cm")) + 
-          labs(x = "", y = expression(paste("NO"[x],""^{"-"}," mg/l")), title="") +
-  theme(rect=element_rect(fill="transparent"))+
-  theme(plot.background = element_rect(color=NA), axis.text.x = element_text(angle=45, hjust = 1))
+          labs(x = "", y = expression(paste("NH"[4],""^{"+"}," mg/l")), title="") +
+  theme(rect=element_rect(fill="transparent"), plot.background = element_rect(color=NA), axis.text.x = element_blank())+
+  #theme(plot.background = element_rect(color=NA), axis.text.x = element_text(angle=45, hjust = 1))+
+  scale_x_date(date_breaks = "1 month", limits = c(range(NH3_PO4_Unknown_dropNegs$Date)), date_labels = "%b %y")
   
  
 plot.Mock
@@ -251,6 +198,36 @@ legend_plot_bottom #View the plot
 #ggsave("../figures/Legend_bottom.png", plot=legend_plot_bottom, device="png", path=NULL, scale=1, dpi=300, height = 3, width = 12, limitsize=T, bg="white")
 ```
 
+```{r "Mock" style NOX plot}
+# This is actually a better way to make the plot anyway
+
+# Make $Date a Date object:
+NOX_Unknown_dropNegs$Date <- as.Date(NOX_Unknown_dropNegs$Date)
+
+plot.Mock.NOX <- ggplot(data = NOX_Unknown_dropNegs, aes(x = Date, y = Peak.Concentration, shape=Site, color=Site, fill = Site)) +
+  geom_line(size = 1) +
+  geom_point(size = 4)+
+  scale_color_manual(values=c("#CC79A7","#0072B2"), labels = c("Upstream", "Downstream"), name="Sample Location") +
+  scale_shape_manual(values = c(24, 25), labels = c("Upstream", "Downstream"), name = "Sample Location")+
+  scale_fill_manual(values = c("#CC79A7","#0072B2"), labels = c("Upstream", "Downstream"), name="Sample Location")+
+  theme_bw() +
+  #Remove plot grid lines
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
+  #Set axis title and text properties, tick marks, and labels
+  theme(text=element_text(size=20),axis.title=element_text(size=20,face="bold"),
+          axis.text=element_text(size=20),  
+          axis.title.y=element_text(margin=margin(r=10)),
+          axis.title.x = element_text(margin = margin(r=10)),
+          panel.border = element_rect(colour = "black",linewidth=1),strip.text = element_text(size = 20), legend.position="bottom", legend.title = element_text(size=20), legend.text=element_text(size=20)) + 
+          theme(axis.ticks.length=unit(0.3,"cm")) + 
+          labs(x = "", y = expression(paste("NO"[x],""^{"-"}," mg/l")), title="") +
+  theme(rect=element_rect(fill="transparent"))+
+  theme(plot.background = element_rect(color=NA), axis.text.x = element_text(angle=45, hjust = 1))+
+  scale_x_date(date_breaks = "1 month", limits = c(range(NH3_PO4_Unknown_dropNegs$Date)), date_labels = "%b %y")
+  
+ 
+plot.Mock.NOX
+```
 
 
 ```{r panel NH3 and NOX}
@@ -261,4 +238,11 @@ two_panel_NH3_NOX
 #ggsave("../figures/NH3_NOX.png", plot=two_panel_NH3_NOX, device="png", path=NULL, scale=1, width=12, height=10, dpi=600, limitsize=TRUE, bg="white")
 ```
 
+```{r two-panel "Mock" style}
+two_panel_NH3_NOX_V2 <- ggarrange(plot.Mock, plot.Mock.NOX, ncol = 1, nrow = 2, labels = NULL, legend = "none")
+
+two_panel_NH3_NOX_V2
+
+#ggsave("../figures/NH3_NOX.png", plot=two_panel_NH3_NOX_V2, device="png", path=NULL, scale=1, width=12, height=10, dpi=600, limitsize=TRUE, bg="white")
+```
 

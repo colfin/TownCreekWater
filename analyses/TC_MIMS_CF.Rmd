@@ -1,0 +1,85 @@
+---
+title: "TC_MIMS_CF"
+author: "CF"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+rm(list=ls())
+knitr::opts_knit$set(root.dir="~/GitHub/TownCreekWater/analyses/")
+```
+
+```{r load packages}
+require("tidyverse")
+require("ggpubr")
+```
+
+```{r Color-blind-friendly palette}
+# From: http://www.cookbook-r.com/Graphs/Colors_(ggplot2)/
+
+cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+```
+
+```{r read in data}
+SedSlurryFlux <- read.csv("../data/MIMS/Oct24/CalculatedSedSlurryFluxes.csv")
+```
+
+```{r}
+SedSlurryFlux$axis_labels <- factor(x = c("In-stream \nupstream", "In-stream \nisland", "In-stream \ndownstream", "Dry \nupstream", "Dry \ndownstream"), levels = c("Dry \nupstream", "Dry \ndownstream", "In-stream \nupstream", "In-stream \ndownstream", "In-stream \nisland"))
+```
+
+
+
+```{r N barchart}
+SedSlurryN.plot <- ggplot(data = SedSlurryFlux, aes(x=axis_labels, y=FinalFluxValue.umol.hr.m2._N)) +
+  geom_bar(stat = "identity", position = position_dodge(), fill = "gray46", color = "gray46")+
+  theme_bw() +
+  #Remove plot grid lines
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
+  #Set axis title and text properties, tick marks, and labels
+  theme(text=element_text(size=30),axis.title=element_text(size=30,face="bold"),
+          axis.text=element_text(size=30),  
+          axis.title.y=element_text(margin=margin(r=10)),
+          panel.border = element_rect(colour = "black",linetype=1),strip.text = element_text(size = 30), legend.position="right", legend.title = element_text(size=30), legend.text=element_text(size=30)) + 
+          theme(axis.ticks.length=unit(0.3,"cm")) + 
+          labs(x = "", y = expression(paste("µmol N"[2],"-N m"^{-2}," hr"^{-1})), title="") +
+  theme(rect=element_rect(fill="transparent"))+
+  theme(plot.background = element_rect(color=NA))+
+  theme(axis.text.x = element_blank())
+
+SedSlurryN.plot
+```
+
+```{r}
+SedSlurryO2.plot <- ggplot(data = SedSlurryFlux, aes(x=axis_labels, y=FinalFluxValue.umol.hr.m2._O2)) +
+  geom_bar(stat = "identity", position = position_dodge(), fill = "gray46", color = "gray46")+
+  theme_bw() +
+  #Remove plot grid lines
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
+  #Set axis title and text properties, tick marks, and labels
+  theme(text=element_text(size=30),axis.title=element_text(size=30,face="bold"),
+          axis.text=element_text(size=30),  
+          axis.title.y=element_text(margin=margin(r=10)),
+          panel.border = element_rect(colour = "black",linetype=1),strip.text = element_text(size = 30), legend.position="right", legend.title = element_text(size=30), legend.text=element_text(size=30)) + 
+          theme(axis.ticks.length=unit(0.3,"cm")) + 
+          labs(x = "", y = expression(paste("µmol O"[2]," m"^{-2}," hr"^{-1})), title="") +
+  theme(rect=element_rect(fill="transparent"))+
+  theme(plot.background = element_rect(color=NA))
+
+SedSlurryO2.plot
+```
+
+```{r panel}
+# 2 panel figure, pre-post on the left, all groups on the right
+MIMS_2panel.plot <- ggarrange(SedSlurryN.plot, SedSlurryO2.plot, ncol = 1, nrow = 2, legend = "none", align = "hv", labels = c("A", "B"))
+
+MIMS_2panel.plot
+
+ggsave("../figures/MIMS_SedSlurry_2Panel.png", plot=MIMS_2panel.plot, device="png", path=NULL, scale=1, width=15, height=12, dpi=600, limitsize=TRUE, bg="white")
+
+# FIX WITH LARGER TEXT
+```
+
+

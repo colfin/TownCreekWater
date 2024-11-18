@@ -1,0 +1,6 @@
+Core,Date,RSC,Pool,Up_or_down,Water_column,FinalFluxValue(umol/hr/m2)_N,FinalFluxValue(umol/hr/m2)_O2
+IS_P1,20241003,in-stream,I1,upstream,submerged,70.62,-211.59
+IS_P4i,20241003,in-stream,I4,downstream,island,26.94,-273.78
+IS_P4,20241003,in-stream,I4,downstream,submerged,49.94,-474.73
+Dr_P5,20241003,dry,D5,upstream,dry,34.93,-78.97
+Dr_P4,20241003,dry,D4,downstream,dry,394.17,-98.37

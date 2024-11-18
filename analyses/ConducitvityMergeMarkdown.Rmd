@@ -65,9 +65,7 @@ TotalISRSCP1Cond$Date2 = as.Date(TotalISRSCP1Cond$Date,"%m/%d/%Y" )
 plot.TISRSCP1 <- ggplot(
   data = TotalISRSCP1Cond, aes(x = Date2, y = Specific_Conductance, group=1)
  ) +
-  theme_bw() +
-  #Remove plot grid lines
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+ 
      geom_line() +
      geom_point(size=.25)+ 
      labs(
@@ -77,6 +75,9 @@ plot.TISRSCP1 <- ggplot(
      scale_x_date(date_labels = "%F", date_breaks = "1 month")+
      theme(axis.text.x = element_text(angle=45, hjust = 1))+
     #Set axis title and text properties, tick marks, and labels
+   theme_bw() +
+  #Remove plot grid lines
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
   theme(text=element_text(size=20),axis.title=element_text(size=20,face="bold"),
           axis.text=element_text(size=20),  
           axis.title.y=element_text(margin=margin(r=10)),

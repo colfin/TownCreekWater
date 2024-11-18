@@ -56,7 +56,7 @@ plot.R1WL
 
 ```{r working date plot - Riffle 3 Water Level}
 # Read in data:
-FinalRiffle3 <- read.csv("C:\\Users\\Teten\\GitHub\\TownCreekWater\\data\\HoboData\\Totalriffle3.csv")
+#FinalRiffle3 <- read.csv("C:\\Users\\Teten\\GitHub\\TownCreekWater\\data\\HoboData\\Totalriffle3.csv")
 FinalRiffle3 <- read.csv("../data/HoboData/Totalriffle3.csv")
 
 
@@ -93,7 +93,7 @@ plot.R3WL
 
 ```{r working date plot - Piezometer Shallow}
 # Read in data:
-TotalPiezometerShallow <- read.csv("C:\\Users\\Teten\\GitHub\\TownCreekWater\\data\\HoboData\\TotalRSC_Piezometer_shallow.csv")
+#TotalPiezometerShallow <- read.csv("C:\\Users\\Teten\\GitHub\\TownCreekWater\\data\\HoboData\\TotalRSC_Piezometer_shallow.csv")
 
 # Format date:
 TotalPiezometerShallow$Date2 = as.Date(TotalPiezometerShallow$Date,"%m/%d/%Y")
@@ -118,7 +118,7 @@ plot.TPS
 
 ```{r working date plot - Piezometer Up Slope}
 # Read in data:
-TotalPiezometerUpSlope <- read.csv("C:\\Users\\Teten\\GitHub\\TownCreekWater\\data\\HoboData\\piezometer_up_slope.csv")
+#TotalPiezometerUpSlope <- read.csv("C:\\Users\\Teten\\GitHub\\TownCreekWater\\data\\HoboData\\piezometer_up_slope.csv")
 
 # Format date:
 TotalPiezometerUpSlope$Date2 = as.Date(TotalPiezometerUpSlope$Date,"%m/%d/%Y")
@@ -175,7 +175,7 @@ plot.TSRSCD
 
 ```{r working date plot - Piezometer Deep Water Level}
 # Read in data:
-TotalPiezometerDeep <- read.csv("C:\\Users\\Teten\\GitHub\\TownCreekWater\\data\\HoboData\\Totalrsc_piezometer_deep.csv")
+#TotalPiezometerDeep <- read.csv("C:\\Users\\Teten\\GitHub\\TownCreekWater\\data\\HoboData\\Totalrsc_piezometer_deep.csv")
 
 # Format date:
 TotalPiezometerDeep$Date2 = as.Date(TotalPiezometerDeep$Date,"%m/%d/%Y")
@@ -234,6 +234,6 @@ four_panel_IS_Dry_up_Down <- ggarrange(plot.R1WL, plot.TSRSCU, plot.R3WL, plot.T
 
 four_panel_IS_Dry_up_Down
 
-ggsave("../figures/WaterLVL.png", plot=four_panel_IS_Dry_up_Down, device="png", path=NULL, scale=1, width=14, height=10, dpi=600, limitsize=TRUE, bg="white")
+#ggsave("../figures/WaterLVL.png", plot=four_panel_IS_Dry_up_Down, device="png", path=NULL, scale=1, width=14, height=10, dpi=600, limitsize=TRUE, bg="white")
 ```
 
