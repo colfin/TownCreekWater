@@ -6,21 +6,15 @@ date: "2024-02-22"
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+rm(list=ls())
+knitr::opts_knit$set(root.dir="~/GitHub/TownCreekWater/analyses/")
 ```
 
-```{r-required packaging}
+```{r load packages}
 #load in necessary packages 
 require(tidyverse)
-require(ggplot2)
 require(lubridate)
 ```
-
-```{r}
-require(tidyverse)
-require(ggplot2)
-require(lubridate)
-```
-
 
 ```{r - Node 12 TC Upstream}
 # read in csv file 
@@ -30,7 +24,7 @@ N12TCUP <- read.csv("C:\\Users\\Teten\\Downloads\\Peralta Lab Data\\Grafana\\Nod
 N12TCUP$Time2 <- as.Date(N12TCUP$Time,"%m/%d/%Y")
 
 
-# No Negative water level values so no furthermanipulation is required 
+# No Negative water level values so no further manipulation is required 
 
 #plot
 plot.N12TCUP <- ggplot (data = N12TCUP, aes(x = Time2, y = Water_level) 

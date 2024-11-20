@@ -1,0 +1,478 @@
+---
+title: "TC_Storms"
+author: "CF"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+rm(list=ls())
+knitr::opts_knit$set(root.dir="~/GitHub/TownCreekWater/analyses/")
+```
+
+```{r load packages}
+require(tidyverse)
+require(lubridate)
+require(rstatix)
+require(ggpubr)
+```
+
+```{r read in data}
+Ophelia <- read.csv("../data/Storms/OpheliaCompiledData.csv")
+
+# Dry RSC upstream water level:
+TotalSmallRSCUp <- read.csv("../data/HoboData/TotalTC_Small_RSC_Up.csv")
+
+# Dry RSC downstream water level:
+TotalSmallRSCDown <- read.csv("../data/HoboData/Total_Small_RSC_Down.csv")
+
+# Dry RSC downstream with Ophelia dates (Nov. 15, 2023 download):
+Dry_RSC_Down_LVL_Nov <- read.csv("../data/HoboData/TC_Small_RSC_Down_OpheliaRange.csv")
+```
+
+```{r wrangling}
+Ophelia$RSC <- as.factor(Ophelia$RSC)
+Ophelia$Up_or_down <- as.factor(Ophelia$Up_or_down)
+Ophelia$Up_or_down <- factor(Ophelia$Up_or_down, levels = c("Upstream", "Downstream", "Composite"))
+
+# Make date-time column:
+Ophelia$DateTime <- mdy_hm(paste(Ophelia$Date, Ophelia$Time))
+
+
+
+
+# Drop negatives and below detection limit values from ERL:
+# Convert negatives to zeroes:
+Ophelia <- Ophelia %>%
+  dplyr::mutate(PO4_uM = ifelse(PO4_uM < 0, 0, PO4_uM)) %>%
+  dplyr::mutate(PO4_mg.L = ifelse(PO4_mg.L < 0, 0, PO4_mg.L)) %>%
+  dplyr::mutate(TSS_mg.L = ifelse(TSS_mg.L < 0, 0, TSS_mg.L))
+
+
+# Calculate chloride ratios:
+Ophelia$NH4toCl <- Ophelia$NH4_mg.L / Ophelia$Cl_mg.L
+Ophelia$NOxtoCl <- Ophelia$NO3.NO2_mgL / Ophelia$Cl_mg.L
+Ophelia$TDNtoCl <- Ophelia$TDN_mg.L / Ophelia$Cl_mg.L
+
+# subset by RSC:
+Ophelia_IS <- Ophelia %>%
+  filter(Ophelia$RSC=="In-stream")
+
+Ophelia_Dry <- Ophelia %>%
+  filter(Ophelia$RSC=="Dry")
+```
+
+
+```{r plotting}
+# Plot Cl first
+plot.IS_Cl <- ggplot(data = Ophelia_IS, aes(x = DateTime, y = Cl_mg.L, shape=Up_or_down, color=Up_or_down, fill = Up_or_down)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 4)+
+  #scale_color_manual(values=c("#CC79A7","#0072B2"), labels = c("Upstream", "Downstream"), name="Sample Location") +
+  #scale_shape_manual(values = c(24, 25), labels = c("Upstream", "Downstream"), name = "Sample Location")+
+  #scale_fill_manual(values = c("#CC79A7","#0072B2"), labels = c("Upstream", "Downstream"), name="Sample Location")+
+  theme_bw() +
+  #Remove plot grid lines
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
+  #Set axis title and text properties, tick marks, and labels
+  theme(text=element_text(size=20),axis.title=element_text(size=20,face="bold"),
+          axis.text=element_text(size=20),  
+          axis.title.y=element_text(margin=margin(r=10)),
+          axis.title.x = element_text(margin = margin(r=10)),
+          panel.border = element_rect(colour = "black",linewidth=1),strip.text = element_text(size = 20), legend.position="bottom", legend.title = element_text(size=20), legend.text=element_text(size=20)) + 
+          theme(axis.ticks.length=unit(0.3,"cm")) + 
+          labs(x = "", y = expression(paste("Cl"^{"-"}," mg/l")), title="") +
+  theme(rect=element_rect(fill="transparent"))+
+  theme(plot.background = element_rect(color=NA), axis.text.x = element_text(angle=45, hjust = 1))
+  #scale_x_date(date_breaks = "1 month", limits = c(range(NH3_PO4_Unknown_dropNegs$Date)), date_labels = "%b %y")
+  
+ 
+plot.IS_Cl
+
+
+plot.Dry_Cl <- ggplot(data = Ophelia_Dry, aes(x = DateTime, y = Cl_mg.L, shape=Up_or_down, color=Up_or_down, fill = Up_or_down)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 4)+
+  #scale_color_manual(values=c("#CC79A7","#0072B2"), labels = c("Upstream", "Downstream"), name="Sample Location") +
+  #scale_shape_manual(values = c(24, 25), labels = c("Upstream", "Downstream"), name = "Sample Location")+
+  #scale_fill_manual(values = c("#CC79A7","#0072B2"), labels = c("Upstream", "Downstream"), name="Sample Location")+
+  theme_bw() +
+  #Remove plot grid lines
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
+  #Set axis title and text properties, tick marks, and labels
+  theme(text=element_text(size=20),axis.title=element_text(size=20,face="bold"),
+          axis.text=element_text(size=20),  
+          axis.title.y=element_text(margin=margin(r=10)),
+          axis.title.x = element_text(margin = margin(r=10)),
+          panel.border = element_rect(colour = "black",linewidth=1),strip.text = element_text(size = 20), legend.position="bottom", legend.title = element_text(size=20), legend.text=element_text(size=20)) + 
+          theme(axis.ticks.length=unit(0.3,"cm")) + 
+          labs(x = "", y = expression(paste("Cl"^{"-"}," mg/l")), title="") +
+  theme(rect=element_rect(fill="transparent"))+
+  theme(plot.background = element_rect(color=NA), axis.text.x = element_text(angle=45, hjust = 1))
+  #scale_x_date(date_breaks = "1 month", limits = c(range(NH3_PO4_Unknown_dropNegs$Date)), date_labels = "%b %y")
+  
+ 
+plot.Dry_Cl
+```
+```{r NH4 IS plot}
+plot.IS_NH4 <- ggplot(data = Ophelia_IS, aes(x = DateTime, y = NH4_mg.L, shape=Up_or_down, color=Up_or_down, fill = Up_or_down)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 4)+
+  #scale_color_manual(values=c("#CC79A7","#0072B2"), labels = c("Upstream", "Downstream"), name="Sample Location") +
+  #scale_shape_manual(values = c(24, 25), labels = c("Upstream", "Downstream"), name = "Sample Location")+
+  #scale_fill_manual(values = c("#CC79A7","#0072B2"), labels = c("Upstream", "Downstream"), name="Sample Location")+
+  theme_bw() +
+  #Remove plot grid lines
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
+  #Set axis title and text properties, tick marks, and labels
+  theme(text=element_text(size=20),axis.title=element_text(size=20,face="bold"),
+          axis.text=element_text(size=20),  
+          axis.title.y=element_text(margin=margin(r=10)),
+          axis.title.x = element_text(margin = margin(r=10)),
+          panel.border = element_rect(colour = "black",linewidth=1),strip.text = element_text(size = 20), legend.position="bottom", legend.title = element_text(size=20), legend.text=element_text(size=20)) + 
+          theme(axis.ticks.length=unit(0.3,"cm")) + 
+          labs(x = "", y = expression(paste("NH"[4], ""^{"+"}," mg/l")), title="") +
+  theme(rect=element_rect(fill="transparent"))+
+  theme(plot.background = element_rect(color=NA), axis.text.x = element_text(angle=45, hjust = 1))
+  #scale_x_datetime(date_breaks = "6 hours", limits = c(range(Ophelia_IS$DateTime)))
+  
+ 
+plot.IS_NH4
+```
+
+
+
+```{r Plot NH4 to Cl}
+plot.IS_NH4toCl <- ggplot(data = Ophelia_IS, aes(x = DateTime, y = NH4toCl, shape=Up_or_down, color=Up_or_down, fill = Up_or_down)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 4)+
+  scale_color_manual(values=c("#CC79A7","#0072B2"), labels = c("Upstream", "Downstream"), name="Sample Location") +
+  scale_shape_manual(values = c(24, 25), labels = c("Upstream", "Downstream"), name = "Sample Location")+
+  scale_fill_manual(values = c("#CC79A7","#0072B2"), labels = c("Upstream", "Downstream"), name="Sample Location")+
+  theme_bw() +
+  #Remove plot grid lines
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
+  #Set axis title and text properties, tick marks, and labels
+  theme(text=element_text(size=20),axis.title=element_text(size=20,face="bold"),
+          axis.text=element_text(size=20),  
+          axis.title.y=element_text(margin=margin(r=10)),
+          axis.title.x = element_text(margin = margin(r=10)),
+          panel.border = element_rect(colour = "black",linewidth=1),strip.text = element_text(size = 20), legend.position="bottom", legend.title = element_text(size=20), legend.text=element_text(size=20)) + 
+          theme(axis.ticks.length=unit(0.3,"cm")) + 
+          labs(x = "", y = expression(paste("NH"[4], ""^{"+"},":Cl", ""^{"-"})), title="") +
+  theme(rect=element_rect(fill="transparent"))+
+  theme(plot.background = element_rect(color=NA), axis.text.x = element_text(angle=45, hjust = 1))+
+  theme(axis.text.x = element_blank())
+  
+  
+ 
+plot.IS_NH4toCl
+
+
+plot.Dry_NH4toCl <- ggplot(data = Ophelia_Dry, aes(x = DateTime, y = NH4toCl, shape=Up_or_down, color=Up_or_down, fill = Up_or_down)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 4)+
+  scale_color_manual(values=c("#CC79A7","#0072B2"), labels = c("Upstream", "Downstream"), name="Sample Location") +
+  scale_shape_manual(values = c(24, 25), labels = c("Upstream", "Downstream"), name = "Sample Location")+
+  scale_fill_manual(values = c("#CC79A7","#0072B2"), labels = c("Upstream", "Downstream"), name="Sample Location")+
+  theme_bw() +
+  #Remove plot grid lines
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
+  #Set axis title and text properties, tick marks, and labels
+  theme(text=element_text(size=20),axis.title=element_text(size=20,face="bold"),
+          axis.text=element_text(size=20),  
+          axis.title.y=element_text(margin=margin(r=10)),
+          axis.title.x = element_text(margin = margin(r=10)),
+          panel.border = element_rect(colour = "black",linewidth=1),strip.text = element_text(size = 20), legend.position="bottom", legend.title = element_text(size=20), legend.text=element_text(size=20)) + 
+          theme(axis.ticks.length=unit(0.3,"cm")) + 
+          labs(x = "", y = expression(paste("NH"[4], ""^{"+"},":Cl", ""^{"-"})), title="") +
+  theme(rect=element_rect(fill="transparent"))+
+  theme(plot.background = element_rect(color=NA), axis.text.x = element_text(angle=45, hjust = 1))+
+  theme(axis.text.x = element_blank())
+  
+  
+ 
+plot.Dry_NH4toCl
+```
+
+```{r Plot NOx to Cl}
+plot.IS_NOxtoCl <- ggplot(data = Ophelia_IS, aes(x = DateTime, y = NOxtoCl, shape=Up_or_down, color=Up_or_down, fill = Up_or_down)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 4)+
+  scale_color_manual(values=c("#CC79A7","#0072B2"), labels = c("Upstream", "Downstream"), name="Sample Location") +
+  scale_shape_manual(values = c(24, 25), labels = c("Upstream", "Downstream"), name = "Sample Location")+
+  scale_fill_manual(values = c("#CC79A7","#0072B2"), labels = c("Upstream", "Downstream"), name="Sample Location")+
+  theme_bw() +
+  #Remove plot grid lines
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
+  #Set axis title and text properties, tick marks, and labels
+  theme(text=element_text(size=20),axis.title=element_text(size=20,face="bold"),
+          axis.text=element_text(size=20),  
+          axis.title.y=element_text(margin=margin(r=10)),
+          axis.title.x = element_text(margin = margin(r=10)),
+          panel.border = element_rect(colour = "black",linewidth=1),strip.text = element_text(size = 20), legend.position="bottom", legend.title = element_text(size=20), legend.text=element_text(size=20)) + 
+          theme(axis.ticks.length=unit(0.3,"cm")) + 
+          labs(x = "", y = expression(paste("NO"[x], ""^{"-"},":Cl", ""^{"-"})), title="") +
+  theme(rect=element_rect(fill="transparent"))+
+  theme(plot.background = element_rect(color=NA), axis.text.x = element_text(angle=45, hjust = 1))+
+  theme(axis.text.x = element_blank())
+  
+  
+ 
+plot.IS_NOxtoCl
+
+
+plot.Dry_NOxtoCl <- ggplot(data = Ophelia_Dry, aes(x = DateTime, y = NOxtoCl, shape=Up_or_down, color=Up_or_down, fill = Up_or_down)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 4)+
+  scale_color_manual(values=c("#CC79A7","#0072B2"), labels = c("Upstream", "Downstream"), name="Sample Location") +
+  scale_shape_manual(values = c(24, 25), labels = c("Upstream", "Downstream"), name = "Sample Location")+
+  scale_fill_manual(values = c("#CC79A7","#0072B2"), labels = c("Upstream", "Downstream"), name="Sample Location")+
+  theme_bw() +
+  #Remove plot grid lines
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
+  #Set axis title and text properties, tick marks, and labels
+  theme(text=element_text(size=20),axis.title=element_text(size=20,face="bold"),
+          axis.text=element_text(size=20),  
+          axis.title.y=element_text(margin=margin(r=10)),
+          axis.title.x = element_text(margin = margin(r=10)),
+          panel.border = element_rect(colour = "black",linewidth=1),strip.text = element_text(size = 20), legend.position="bottom", legend.title = element_text(size=20), legend.text=element_text(size=20)) + 
+          theme(axis.ticks.length=unit(0.3,"cm")) + 
+          labs(x = "", y = expression(paste("NO"[x], ""^{"-"},":Cl", ""^{"-"})), title="") +
+  theme(rect=element_rect(fill="transparent"))+
+  theme(plot.background = element_rect(color=NA), axis.text.x = element_text(angle=45, hjust = 1))+
+  theme(axis.text.x = element_blank())
+  
+  
+ 
+plot.Dry_NOxtoCl
+```
+
+```{r TDN to Cl plot}
+plot.IS_TDNtoCl <- ggplot(data = Ophelia_IS, aes(x = DateTime, y = TDNtoCl, shape=Up_or_down, color=Up_or_down, fill = Up_or_down)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 4)+
+  scale_color_manual(values=c("#CC79A7","#0072B2"), labels = c("Upstream", "Downstream"), name="Sample Location") +
+  scale_shape_manual(values = c(24, 25), labels = c("Upstream", "Downstream"), name = "Sample Location")+
+  scale_fill_manual(values = c("#CC79A7","#0072B2"), labels = c("Upstream", "Downstream"), name="Sample Location")+
+  theme_bw() +
+  #Remove plot grid lines
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
+  #Set axis title and text properties, tick marks, and labels
+  theme(text=element_text(size=20),axis.title=element_text(size=20,face="bold"),
+          axis.text=element_text(size=20),  
+          axis.title.y=element_text(margin=margin(r=10)),
+          axis.title.x = element_text(margin = margin(r=10)),
+          panel.border = element_rect(colour = "black",linewidth=1),strip.text = element_text(size = 20), legend.position="bottom", legend.title = element_text(size=20), legend.text=element_text(size=20)) + 
+          theme(axis.ticks.length=unit(0.3,"cm")) + 
+          labs(x = "", y = expression(paste("TDN",":Cl", ""^{"-"})), title="") +
+  theme(rect=element_rect(fill="transparent"))+
+  theme(plot.background = element_rect(color=NA), axis.text.x = element_text(angle=45, hjust = 1))+
+  theme(axis.text.x = element_blank())
+  
+  
+ 
+plot.IS_TDNtoCl
+
+
+plot.Dry_TDNtoCl <- ggplot(data = Ophelia_Dry, aes(x = DateTime, y = TDNtoCl, shape=Up_or_down, color=Up_or_down, fill = Up_or_down)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 4)+
+  scale_color_manual(values=c("#CC79A7","#0072B2"), labels = c("Upstream", "Downstream"), name="Sample Location") +
+  scale_shape_manual(values = c(24, 25), labels = c("Upstream", "Downstream"), name = "Sample Location")+
+  scale_fill_manual(values = c("#CC79A7","#0072B2"), labels = c("Upstream", "Downstream"), name="Sample Location")+
+  theme_bw() +
+  #Remove plot grid lines
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
+  #Set axis title and text properties, tick marks, and labels
+  theme(text=element_text(size=20),axis.title=element_text(size=20,face="bold"),
+          axis.text=element_text(size=20),  
+          axis.title.y=element_text(margin=margin(r=10)),
+          axis.title.x = element_text(margin = margin(r=10)),
+          panel.border = element_rect(colour = "black",linewidth=1),strip.text = element_text(size = 20), legend.position="bottom", legend.title = element_text(size=20), legend.text=element_text(size=20)) + 
+          theme(axis.ticks.length=unit(0.3,"cm")) + 
+          labs(x = "", y = expression(paste("TDN",":Cl", ""^{"-"})), title="") +
+  theme(rect=element_rect(fill="transparent"))+
+  theme(plot.background = element_rect(color=NA), axis.text.x = element_text(angle=45, hjust = 1))+
+  theme(axis.text.x = element_blank())
+  
+  
+ 
+plot.Dry_TDNtoCl
+```
+
+
+
+## Water level
+
+### Grafana
+```{r - Node 12 TC Upstream}
+# read in csv file 
+N12TCUP <- read.csv("../data/Grafana/Node 12 -TC Upstream _07-23 to 01-24.csv")
+
+# Date manipulation - to month and day 
+N12TCUP$Time2 <- as.Date(N12TCUP$Time,"%m/%d/%Y")
+
+
+# No Negative water level values so no further manipulation is required 
+
+#plot
+plot.N12TCUP <- ggplot (data = N12TCUP, aes(x = Time2, y = Water_level) 
+  )+
+  geom_point()+
+  geom_line()+
+  labs( 
+    title = "Node 12 TC Upstream ",
+    x = "", y = "Water level (m)",
+    scale_x_date(date_labels = "%F", date_breaks = "1 month"))+
+    theme(axis.text.x = element_text(angle=45, hjust = 1))
+plot.N12TCUP
+```
+
+```{r}
+# read in csv file 
+N10TCDown <- read.csv("../data/Grafana/Node 10 -TC Downstream _07-23 to 01-24.csv")
+
+# Date manipulation - to month and day 
+N10TCDown$Time2 <- as.Date(N10TCDown$Time,"%m/%d/%Y")
+
+
+#  Negative water level values so  further manipulation is required 
+N10TCDown$Water_level[N10TCDown$Water_level<0] <- 0
+
+#plot
+plot.N10TCDown <- ggplot(data = N10TCDown, aes(x = Time2, y = Water_level) 
+  )+
+  geom_point()+
+  geom_line()+
+  labs( 
+    title = "Node 10 TC Downstream ",
+    x = "", y = "Water level (m)",
+    scale_x_date(date_labels = "%F", date_breaks = "1 month"))+
+    theme(axis.text.x = element_text(angle=45, hjust = 1))
+plot.N10TCDown
+```
+```{r Grafana wrangling}
+# Rename water levels up/down:
+colnames(N12TCUP)[2] <- "Water_level_up"
+colnames(N10TCDown)[2] <- "Water_level_down"
+
+start_time <- as.POSIXct("9/22/2023 5:00", format = "%m/%d/%Y %H:%M")
+end_time <- as.POSIXct("9/24/2023 8:00", format = "%m/%d/%Y %H:%M")
+
+N12TCUP$POS_Time <- as.POSIXct(N12TCUP$Time, format = "%m/%d/%Y %H:%M")
+N10TCDown$POS_Time <- as.POSIXct(N10TCDown$Time, format = "%m/%d/%Y %H:%M")
+
+# Subset for Ophelia start and end:
+N12TCUP_Ophelia <- N12TCUP[N12TCUP$POS_Time >= start_time & N12TCUP$POS_Time <= end_time, ]
+N10TCDown_Ophelia <- N10TCDown[N10TCDown$POS_Time >= start_time & N10TCDown$POS_Time <= end_time, ]
+
+# Merge Up and Down into one dataframe:
+GrafanaUpDown <- cbind(N12TCUP_Ophelia, N10TCDown_Ophelia$Water_level_down)
+
+# get rid of extra columns:
+GrafanaUpDown <- GrafanaUpDown %>%
+  dplyr::select(c("POS_Time", "Water_level_up", "N10TCDown_Ophelia$Water_level_down"))
+
+colnames(GrafanaUpDown)[3] <- "Water_level_down"
+```
+
+```{r Grafana plot}
+plot.GrafanaOphelia <- ggplot() +
+  geom_line(data = GrafanaUpDown, aes(x=POS_Time, y=Water_level_up, group=1), color = "#CC79A7", size = 1)+
+  geom_point(data = GrafanaUpDown, aes(x=POS_Time, y=Water_level_up, group=1), color = "#CC79A7", fill = "#CC79A7", size = 4, shape = 24)+
+  geom_line(data = GrafanaUpDown, aes(x=POS_Time, y=Water_level_down, group=2), color = "#0072B2", size = 1)+
+    geom_point(data = GrafanaUpDown, aes(x=POS_Time, y=Water_level_down, group=2), color = "#0072B2", fill = "#0072B2", size = 4, shape = 25)+
+  theme_bw() +
+  #Remove plot grid lines
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
+  #Set axis title and text properties, tick marks, and labels
+  theme(text=element_text(size=20),axis.title=element_text(size=20),
+          axis.text=element_text(size=20),  
+          axis.title.y=element_text(margin=margin(r=10)),
+          axis.title.x = element_text(margin = margin(r=10)),
+          panel.border = element_rect(colour = "black",linewidth=1),strip.text = element_text(size = 20), legend.position="none", legend.title = element_text(size=20), legend.text=element_text(size=20)) + 
+          theme(axis.ticks.length=unit(0.3,"cm")) + 
+          labs(x = "", y = "water level (m)", title="") +
+  theme(rect=element_rect(fill="transparent"))+
+  theme(plot.background = element_rect(color=NA), axis.text.x = element_text(angle=45, hjust = 1))
+  
+ 
+plot.GrafanaOphelia
+
+```
+
+### HOBO Dry
+```{r wrangling}
+# upstream, dry:
+# Format date:
+TotalSmallRSCUp$POS_Time <- as.POSIXct(TotalSmallRSCUp$Date, format = "%m/%d/%Y %H:%M")
+Dry_RSC_Down_LVL_Nov$POS_Time <- as.POSIXct(Dry_RSC_Down_LVL_Nov$Date.Time..GMT.04.00, format = "%m/%d/%y %H:%M")
+
+# Subset for Ophelia start and end:
+Dry_UP_Ophelia <- TotalSmallRSCUp[TotalSmallRSCUp$POS_Time >= start_time & TotalSmallRSCUp$POS_Time <= end_time, ]
+Dry_Down_Ophelia <- Dry_RSC_Down_LVL_Nov[Dry_RSC_Down_LVL_Nov$POS_Time >= start_time & Dry_RSC_Down_LVL_Nov$POS_Time <= end_time, ]
+
+# Remove NAs from Dry_UP_Ophelia:
+Dry_UP_Ophelia <- na.omit(Dry_UP_Ophelia)
+
+# Combine upstream and downstream sensor depths:
+Dry_RSC_LVL <- cbind(Dry_UP_Ophelia, Dry_Down_Ophelia[, 6:7])
+
+# Rename columns:
+colnames(Dry_RSC_LVL)[6] <- "Sensor_Depth_UP"
+colnames(Dry_RSC_LVL)[8] <- "Sensor_Depth_DOWN"
+
+# Simplify dataframe:
+Dry_RSC_LVL <- Dry_RSC_LVL[,6:8]
+
+# Convert negatives to zeroes:
+Dry_RSC_LVL <- Dry_RSC_LVL %>%
+  dplyr::mutate(Sensor_Depth_UP = ifelse(Sensor_Depth_UP < 0, 0, Sensor_Depth_UP)) %>%
+  dplyr::mutate(Sensor_Depth_DOWN = ifelse(Sensor_Depth_DOWN < 0, 0, Sensor_Depth_DOWN))
+```
+
+```{r Dry RSC water level plot}
+plot.DrRSC_LVL <- ggplot() +
+  geom_line(data = Dry_RSC_LVL, aes(x=POS_Time, y=Sensor_Depth_UP, group=1), color = "#CC79A7", size = 1)+
+  #geom_point(data = Dry_RSC_LVL, aes(x=POS_Time, y=Sensor_Depth_UP, group=1), color = "#CC79A7", fill = "#CC79A7", size = 1, shape = 24)+
+  geom_line(data = Dry_RSC_LVL, aes(x=POS_Time, y=Sensor_Depth_DOWN, group=2), color = "#0072B2", size = 1)+
+    #geom_point(data = Dry_RSC_LVL, aes(x=POS_Time, y=Sensor_Depth_DOWN, group=2), color = "#0072B2", fill = "#0072B2", size = 1, shape = 25)+
+  theme_bw() +
+  #Remove plot grid lines
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
+  #Set axis title and text properties, tick marks, and labels
+  theme(text=element_text(size=20),axis.title=element_text(size=20),
+          axis.text=element_text(size=20),  
+          axis.title.y=element_text(margin=margin(r=10)),
+          axis.title.x = element_text(margin = margin(r=10)),
+          panel.border = element_rect(colour = "black",linewidth=1),strip.text = element_text(size = 20), legend.position="none", legend.title = element_text(size=20), legend.text=element_text(size=20)) + 
+          theme(axis.ticks.length=unit(0.3,"cm")) + 
+          labs(x = "", y = "water level (m)", title="") +
+  theme(rect=element_rect(fill="transparent"))+
+  theme(plot.background = element_rect(color=NA), axis.text.x = element_text(angle=45, hjust = 1))
+  
+ 
+plot.DrRSC_LVL
+```
+
+
+
+## Panel Plots
+```{r panel IS}
+All_NstoCl_plots <- ggarrange(plot.IS_NH4toCl, plot.IS_NOxtoCl, plot.IS_TDNtoCl, plot.GrafanaOphelia, ncol = 1, nrow = 4, labels = c("A", "B", "C", "D"), legend = "none", align = "hv")
+
+All_NstoCl_plots
+
+#ggsave("../figures/Ophelia_IS_NtoCl_4panel.png", plot=All_NstoCl_plots, device="png", path=NULL, scale=1, width=12, height=20, dpi=600, limitsize=TRUE, bg="white")
+```
+
+```{r panel Dry}
+Dry_NstoCl_plots <- ggarrange(plot.Dry_NH4toCl, plot.Dry_NOxtoCl, plot.Dry_TDNtoCl, plot.DrRSC_LVL, ncol = 1, nrow = 4, labels = c("A", "B", "C", "D"), legend = "none", align = "hv")
+
+Dry_NstoCl_plots
+
+#ggsave("../figures/Ophelia_DRY_NtoCl_4panel.png", plot=Dry_NstoCl_plots, device="png", path=NULL, scale=1, width=12, height=20, dpi=600, limitsize=TRUE, bg="white")
+```
+

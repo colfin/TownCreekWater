@@ -14,6 +14,7 @@ knitr::opts_knit$set(root.dir="~/GitHub/TownCreekWater/analyses/")
 ```{r load packages}
 require("tidyverse")
 require("ggpubr")
+require("rstatix")
 ```
 
 ```{r Color-blind-friendly palette}
@@ -24,6 +25,8 @@ cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2"
 
 ```{r read in data}
 SedSlurryFlux <- read.csv("../data/MIMS/Oct24/CalculatedSedSlurryFluxes.csv")
+
+NetNratios <- read.csv("../data/MIMS/Oct24/NetNRatios.csv")
 ```
 
 ```{r}
@@ -82,4 +85,32 @@ ggsave("../figures/MIMS_SedSlurry_2Panel.png", plot=MIMS_2panel.plot, device="pn
 # FIX WITH LARGER TEXT
 ```
 
+## Water column N2 saturation
+```{r}
+# test for extreme outliers:
+Outliers <- NetNratios %>%
+  identify_outliers(NetNratio)
+
+  # two outliers, but not extreme, so passes assumption.
+
+# test normality:
+NetNratios %>%
+  shapiro_test(NetNratio)
+  # Not normally distributed
+
+  # QQ plot:
+ggqqplot(NetNratios, "NetNratio")
+
+# Not normal, so use Wilcoxon-Rank Sum test:
+NetN_vs_1_Wilcox <- wilcox.test(NetNratios$NetNratio, alternative = "two.sided", mu = 1, paired = F, data = NetNratios)
+  # maintain null hypothesis that NetN ratio = 1 (neither net denitrifying nor N-fixing)
+
+# Subset for upstream:
+NetN_vs_1_Wilcox_upstream <- wilcox.test(NetNratios$NetNratio, alternative = "two.sided", mu = 1, paired = F, data = NetNratios[1:9,])
+  # maintain null hypothesis that NetN ratio = 1 (neither net denitrifying nor N-fixing)
+
+# Subset for downstream:
+NetN_vs_1_Wilcox_downstream <- wilcox.test(NetNratios$NetNratio, alternative = "two.sided", mu = 1, paired = F, data = NetNratios[10:18,])
+  # maintain null hypothesis that NetN ratio = 1 (neither net denitrifying nor N-fixing)
+```
 
