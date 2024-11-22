@@ -186,7 +186,7 @@ plot.Dry_NH4toCl <- ggplot(data = Ophelia_Dry, aes(x = DateTime, y = NH4toCl, sh
           axis.title.x = element_text(margin = margin(r=10)),
           panel.border = element_rect(colour = "black",linewidth=1),strip.text = element_text(size = 20), legend.position="bottom", legend.title = element_text(size=20), legend.text=element_text(size=20)) + 
           theme(axis.ticks.length=unit(0.3,"cm")) + 
-          labs(x = "", y = expression(paste("NH"[4], ""^{"+"},":Cl", ""^{"-"})), title="") +
+          labs(x = "", y = "", title="") +
   theme(rect=element_rect(fill="transparent"))+
   theme(plot.background = element_rect(color=NA), axis.text.x = element_text(angle=45, hjust = 1))+
   theme(axis.text.x = element_blank())
@@ -239,7 +239,7 @@ plot.Dry_NOxtoCl <- ggplot(data = Ophelia_Dry, aes(x = DateTime, y = NOxtoCl, sh
           axis.title.x = element_text(margin = margin(r=10)),
           panel.border = element_rect(colour = "black",linewidth=1),strip.text = element_text(size = 20), legend.position="bottom", legend.title = element_text(size=20), legend.text=element_text(size=20)) + 
           theme(axis.ticks.length=unit(0.3,"cm")) + 
-          labs(x = "", y = expression(paste("NO"[x], ""^{"-"},":Cl", ""^{"-"})), title="") +
+          labs(x = "", y = "", title="") +
   theme(rect=element_rect(fill="transparent"))+
   theme(plot.background = element_rect(color=NA), axis.text.x = element_text(angle=45, hjust = 1))+
   theme(axis.text.x = element_blank())
@@ -292,7 +292,7 @@ plot.Dry_TDNtoCl <- ggplot(data = Ophelia_Dry, aes(x = DateTime, y = TDNtoCl, sh
           axis.title.x = element_text(margin = margin(r=10)),
           panel.border = element_rect(colour = "black",linewidth=1),strip.text = element_text(size = 20), legend.position="bottom", legend.title = element_text(size=20), legend.text=element_text(size=20)) + 
           theme(axis.ticks.length=unit(0.3,"cm")) + 
-          labs(x = "", y = expression(paste("TDN",":Cl", ""^{"-"})), title="") +
+          labs(x = "", y = "", title="") +
   theme(rect=element_rect(fill="transparent"))+
   theme(plot.background = element_rect(color=NA), axis.text.x = element_text(angle=45, hjust = 1))+
   theme(axis.text.x = element_blank())
@@ -449,7 +449,7 @@ plot.DrRSC_LVL <- ggplot() +
           axis.title.x = element_text(margin = margin(r=10)),
           panel.border = element_rect(colour = "black",linewidth=1),strip.text = element_text(size = 20), legend.position="none", legend.title = element_text(size=20), legend.text=element_text(size=20)) + 
           theme(axis.ticks.length=unit(0.3,"cm")) + 
-          labs(x = "", y = "water level (m)", title="") +
+          labs(x = "", y = "") +
   theme(rect=element_rect(fill="transparent"))+
   theme(plot.background = element_rect(color=NA), axis.text.x = element_text(angle=45, hjust = 1))
   
@@ -474,5 +474,13 @@ Dry_NstoCl_plots <- ggarrange(plot.Dry_NH4toCl, plot.Dry_NOxtoCl, plot.Dry_TDNto
 Dry_NstoCl_plots
 
 #ggsave("../figures/Ophelia_DRY_NtoCl_4panel.png", plot=Dry_NstoCl_plots, device="png", path=NULL, scale=1, width=12, height=20, dpi=600, limitsize=TRUE, bg="white")
+```
+
+```{r try panelling all 8}
+Ophelia_8panel <- ggarrange(plot.IS_NH4toCl, plot.Dry_NH4toCl, plot.IS_NOxtoCl, plot.Dry_NOxtoCl, plot.IS_TDNtoCl, plot.Dry_TDNtoCl, plot.GrafanaOphelia, plot.DrRSC_LVL, ncol = 2, nrow = 4, labels = c("A", "B", "C", "D", "E", "F", "G", "H"), legend = "none", align = "hv")
+
+Ophelia_8panel
+
+#ggsave("../figures/Ophelia_8panel.png", plot=Ophelia_8panel, device="png", path=NULL, scale=1, width=22, height=20, dpi=600, limitsize=TRUE, bg="white")
 ```
 
