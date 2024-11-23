@@ -410,9 +410,13 @@ plot.GrafanaOphelia
 TotalSmallRSCUp$POS_Time <- as.POSIXct(TotalSmallRSCUp$Date, format = "%m/%d/%Y %H:%M")
 Dry_RSC_Down_LVL_Nov$POS_Time <- as.POSIXct(Dry_RSC_Down_LVL_Nov$Date.Time..GMT.04.00, format = "%m/%d/%y %H:%M")
 
+# Star and end times:
+start_time_dry <- as.POSIXct("9/22/2023 13:30", format = "%m/%d/%Y %H:%M")
+end_time_dry <- as.POSIXct("9/23/2023 14:00", format = "%m/%d/%Y %H:%M")
+
 # Subset for Ophelia start and end:
-Dry_UP_Ophelia <- TotalSmallRSCUp[TotalSmallRSCUp$POS_Time >= start_time & TotalSmallRSCUp$POS_Time <= end_time, ]
-Dry_Down_Ophelia <- Dry_RSC_Down_LVL_Nov[Dry_RSC_Down_LVL_Nov$POS_Time >= start_time & Dry_RSC_Down_LVL_Nov$POS_Time <= end_time, ]
+Dry_UP_Ophelia <- TotalSmallRSCUp[TotalSmallRSCUp$POS_Time >= start_time_dry & TotalSmallRSCUp$POS_Time <= end_time_dry, ]
+Dry_Down_Ophelia <- Dry_RSC_Down_LVL_Nov[Dry_RSC_Down_LVL_Nov$POS_Time >= start_time_dry & Dry_RSC_Down_LVL_Nov$POS_Time <= end_time_dry, ]
 
 # Remove NAs from Dry_UP_Ophelia:
 Dry_UP_Ophelia <- na.omit(Dry_UP_Ophelia)
@@ -460,22 +464,6 @@ plot.DrRSC_LVL
 
 
 ## Panel Plots
-```{r panel IS}
-All_NstoCl_plots <- ggarrange(plot.IS_NH4toCl, plot.IS_NOxtoCl, plot.IS_TDNtoCl, plot.GrafanaOphelia, ncol = 1, nrow = 4, labels = c("A", "B", "C", "D"), legend = "none", align = "hv")
-
-All_NstoCl_plots
-
-#ggsave("../figures/Ophelia_IS_NtoCl_4panel.png", plot=All_NstoCl_plots, device="png", path=NULL, scale=1, width=12, height=20, dpi=600, limitsize=TRUE, bg="white")
-```
-
-```{r panel Dry}
-Dry_NstoCl_plots <- ggarrange(plot.Dry_NH4toCl, plot.Dry_NOxtoCl, plot.Dry_TDNtoCl, plot.DrRSC_LVL, ncol = 1, nrow = 4, labels = c("A", "B", "C", "D"), legend = "none", align = "hv")
-
-Dry_NstoCl_plots
-
-#ggsave("../figures/Ophelia_DRY_NtoCl_4panel.png", plot=Dry_NstoCl_plots, device="png", path=NULL, scale=1, width=12, height=20, dpi=600, limitsize=TRUE, bg="white")
-```
-
 ```{r try panelling all 8}
 Ophelia_8panel <- ggarrange(plot.IS_NH4toCl, plot.Dry_NH4toCl, plot.IS_NOxtoCl, plot.Dry_NOxtoCl, plot.IS_TDNtoCl, plot.Dry_TDNtoCl, plot.GrafanaOphelia, plot.DrRSC_LVL, ncol = 2, nrow = 4, labels = c("A", "B", "C", "D", "E", "F", "G", "H"), legend = "none", align = "hv")
 
