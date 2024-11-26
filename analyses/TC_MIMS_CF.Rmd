@@ -88,7 +88,7 @@ MIMS_2panel.plot
 # test for extreme outliers:
 Outliers <- NetNratios %>%
   identify_outliers(NetNratio)
-
+Outliers
   # two outliers, but not extreme, so passes assumption.
 
 # test normality:
@@ -110,5 +110,35 @@ NetN_vs_1_Wilcox_upstream <- wilcox.test(NetNratios$NetNratio, alternative = "tw
 # Subset for downstream:
 NetN_vs_1_Wilcox_downstream <- wilcox.test(NetNratios$NetNratio, alternative = "two.sided", mu = 1, paired = F, data = NetNratios[10:18,])
   # maintain null hypothesis that NetN ratio = 1 (neither net denitrifying nor N-fixing)
+
+# T tests:
+NetN_vs_1_Ttest <- t_test(NetNratios, formula = NetNratio ~ 1, alternative = "two.sided", mu = 1)
+NetN_vs_1_Ttest_up <- t_test(NetNratios[1:9,], formula = NetNratio ~ 1, alternative = "two.sided", mu = 1)
+NetN_vs_1_Ttest_down <- t_test(NetNratios[10:18,], formula = NetNratio ~ 1, alternative = "two.sided", mu = 1)
+NetN_vs_1_Ttest_down_drop_outliers <- t_test(NetNratios[10:16,], formula = NetNratio ~ 1, alternative = "two.sided", mu = 1)
 ```
+
+```{r}
+NetNratios.plot <- ggplot(data = NetNratios, aes(x=SampleID, y=NetNratio, color = Location, fill = Location)) +
+  #geom_bar(stat = "identity", position = position_dodge())+
+  geom_point(size = 5)+
+  geom_hline(yintercept = 1.00)+
+  theme_bw() +
+  #Remove plot grid lines
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
+  #Set axis title and text properties, tick marks, and labels
+  theme(text=element_text(size=30),axis.title=element_text(size=30,face="bold"),
+          axis.text=element_text(size=30),  
+          axis.title.y=element_text(margin=margin(r=10)),
+          panel.border = element_rect(colour = "black",linetype=1),strip.text = element_text(size = 30), legend.position="right", legend.title = element_text(size=30), legend.text=element_text(size=30)) + 
+          theme(axis.ticks.length=unit(0.3,"cm")) + 
+          labs(x = "", y = expression(paste("Obs:Exp, N"[2],": Ar")), title="") +
+  theme(rect=element_rect(fill="transparent"))+
+  theme(plot.background = element_rect(color=NA))+
+  scale_y_continuous(limits = c(0.95, 1.05))
+  #scale_y_continuous(limits = range(NetNratios$NetNratio))
+
+NetNratios.plot
+```
+
 
