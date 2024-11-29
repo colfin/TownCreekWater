@@ -119,9 +119,29 @@ NetN_vs_1_Ttest_down_drop_outliers <- t_test(NetNratios[10:16,], formula = NetNr
 ```
 
 ```{r}
-NetNratios.plot <- ggplot(data = NetNratios, aes(x=SampleID, y=NetNratio, color = Location, fill = Location)) +
-  #geom_bar(stat = "identity", position = position_dodge())+
+# Add short name column for X-axis:
+NetNratios$shortID <- factor(c("I1", "I2", "I3", "I4", "I5", "I6", "I7", "I8", "I9", "D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9"), levels = c(c("I1", "I2", "I3", "I4", "I5", "I6", "I7", "I8", "I9", "D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9")))
+
+NetNratios$Location <- as.factor(NetNratios$Location)
+NetNratios$Location <- factor(NetNratios$Location, levels = c("upstream", "downstream"))
+
+# Plus or minus one standard deviation limits:
+y_mean <- mean(NetNratios$NetNratio)
+y_sd <- sd(NetNratios$NetNratio)
+y_limits <- c(y_mean - (3*y_sd), y_mean + (3*y_sd))
+```
+
+
+
+```{r}
+NetNratios.plot <- ggplot(data = NetNratios, aes(x=shortID, y=NetNratio, color = Location, fill = Location, shape = Location)) +
   geom_point(size = 5)+
+  scale_color_manual(values=c("#CC79A7","#0072B2"), labels = c("Upstream", "Downstream"), name="Sample Location") +
+  scale_shape_manual(values = c(24, 25), labels = c("Upstream", "Downstream"), name = "Sample Location")+
+  scale_fill_manual(values = c("#CC79A7","#0072B2"), labels = c("Upstream", "Downstream"), name="Sample Location")+
+  annotate("rect", xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = 1.00, fill = "grey70", alpha = 0.25) +
+  # Add shading above y = 1
+  annotate("rect", xmin = -Inf, xmax = Inf, ymin = 1.00, ymax = Inf, fill = "grey1", alpha = 0.25) +
   geom_hline(yintercept = 1.00)+
   theme_bw() +
   #Remove plot grid lines
@@ -130,15 +150,18 @@ NetNratios.plot <- ggplot(data = NetNratios, aes(x=SampleID, y=NetNratio, color 
   theme(text=element_text(size=30),axis.title=element_text(size=30,face="bold"),
           axis.text=element_text(size=30),  
           axis.title.y=element_text(margin=margin(r=10)),
-          panel.border = element_rect(colour = "black",linetype=1),strip.text = element_text(size = 30), legend.position="right", legend.title = element_text(size=30), legend.text=element_text(size=30)) + 
+          panel.border = element_rect(colour = "black",linetype=1),strip.text = element_text(size = 30), legend.position="top", legend.title = element_text(size=30), legend.text=element_text(size=30)) + 
           theme(axis.ticks.length=unit(0.3,"cm")) + 
-          labs(x = "", y = expression(paste("Obs:Exp, N"[2],": Ar")), title="") +
+          labs(x = "Sample", y = expression(paste("N"[2]," Saturation Ratio")), title="") +
   theme(rect=element_rect(fill="transparent"))+
-  theme(plot.background = element_rect(color=NA))+
-  scale_y_continuous(limits = c(0.95, 1.05))
+  theme(plot.background = element_rect(color=NA), axis.text.x = element_text(angle=45, hjust = 1))+
+  scale_y_continuous(limits = round(y_limits, digits = 2))
+  #scale_y_continuous(limits = c(0.95, 1.05))
   #scale_y_continuous(limits = range(NetNratios$NetNratio))
 
 NetNratios.plot
+
+#ggsave("../figures/NetRatios.png", plot=NetNratios.plot, device="png", path=NULL, scale=1, width=11, height=8, dpi=600, limitsize=TRUE, bg="white")
 ```
 
 
