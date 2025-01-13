@@ -120,7 +120,7 @@ NetN_vs_1_Ttest_down_drop_outliers <- t_test(NetNratios[10:16,], formula = NetNr
 
 ```{r}
 # Add short name column for X-axis:
-NetNratios$shortID <- factor(c("I1", "I2", "I3", "I4", "I5", "I6", "I7", "I8", "I9", "D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9"), levels = c(c("I1", "I2", "I3", "I4", "I5", "I6", "I7", "I8", "I9", "D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9")))
+NetNratios$shortID <- factor(c("U1", "U2", "U3", "U4", "U5", "U6", "U7", "U8", "U9", "D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9"), levels = c(c("U1", "U2", "U3", "U4", "U5", "U6", "U7", "U8", "U9", "D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9")))
 
 NetNratios$Location <- as.factor(NetNratios$Location)
 NetNratios$Location <- factor(NetNratios$Location, levels = c("upstream", "downstream"))
